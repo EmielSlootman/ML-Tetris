@@ -1,1 +1,7 @@
-deep learning
+In this document we will have a overview of reinforcement learning and deeplearning to have a better knowlage what it is and how to use it.
+This will be done with some links and short discriptions what is in those links.
+
+https://en.wikipedia.org/wiki/Reinforcement_learning
+
+Helpfull youtube movies that can help to get a good overview.
+https://www.youtube.com/watch?v=JgvyzIkgxF0
