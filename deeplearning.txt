@@ -1,0 +1,39 @@
+In this document we will have a overview of reinforcement learning and deeplearning to have a better knowlage what it is and how to use it.
+This will be done with some links and short discriptions what is in those links.
+
+First overview. If it isn't clear what is reinforcement learning and deeplearning
+https://en.wikipedia.org/wiki/Reinforcement_learning
+
+Helpfull youtube movies that can help to get a good overview.
+https://www.youtube.com/watch?v=JgvyzIkgxF0
+
+an overview of the different neural network structrures that are there and there advantages.
+It is not very usefull for us.
+https://www.asimovinstitute.org/neural-network-zoo/
+
+
+
+tetris ()
+https://www.youtube.com/watch?v=pXTfgw9A08w
+
+tetris (code1)
+This algorithm uses a reinforcement learning technique to learn how to play Tetris. 
+It developed a policy on how to select the best action based upon four features of the board:
+aggregate height, unevenness, maximum height, and number of holes.
+ It performed stochastic gradient ascent to achieve the highest score, and quickly outpaced my own efforts.
+ Eventually, since the score is incremented by the square of the number of lines clear,
+ it even learned to clear multiple lines at once!
+https://github.com/scuriosity/machine-learning-tetris
+
+tetris (code2) info: https://medium.com/wenqins-blog/the-making-of-a-deep-learning-tetris-ai-d5663f21d847
+https://github.com/wenqinYe/Neural-Tetris
+
+tetris (code3)
+https://github.com/nuno-faria/tetris-ai
+
+
+tetris (artikel)
+1. https://www.researchgate.net/publication/332683605_The_Game_of_Tetris_in_Machine_Learning/link/5cc31782a6fdcc1d49b20b22/download
+2. https://homes.cs.washington.edu/~xkcd/papers/deep_rl_for_tetris.pdf
+3. https://link.springer.com/content/pdf/10.1007%2F978-3-319-11656-3_15.pdf
+4. http://cs231n.stanford.edu/reports/2016/pdfs/121_Report.pdf
