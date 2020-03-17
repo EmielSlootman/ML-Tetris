@@ -1,0 +1,58 @@
+% Allows you to insert special characters (UTF8)
+\usepackage[utf8]{inputenc}
+
+% Language used in the document.
+\usepackage[english]{babel}
+
+
+% -- Pictures
+% Allows to insert pictures
+\usepackage{graphicx}
+
+% Allows to force positioning of pictures
+\usepackage{float}
+
+% Load eps files (MATLAB files)
+\usepackage{epstopdf}
+
+
+% -- Mathemtatics
+% Additional mathematics
+\usepackage{amsmath}
+
+% Shortcuts for many physics related things.
+% CAUTION: YOU MUST HAVE MCODE.STY FILE IN YOUR PROJECT
+\usepackage{physics}
+
+% Display measurement data easily
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, multi-part-units=single, exponent-product=\cdot}
+
+% -- Layout
+% Change page size to use more normal margins
+\usepackage{fullpage}
+
+% Change how paragraphs are formatted
+\usepackage{parskip}
+
+% Allows you to make two of three column documents (e.g. papers)
+\usepackage{multicol}
+
+% Insert URLs
+\usepackage[hidelinks]{hyperref}
+
+
+% -- Organisation
+% Allows you to use subfiles (very useful!)
+\usepackage{subfiles}
+
+
+% -- References
+% Use the bibLaTeX package.
+% CAUTION: YOU MUST ADDITIONALLY TELL LATEX WHICH LIBRARY YOU ARE USING WITH:
+%          \addbibresource{main.bib}
+%
+%          Afterwards you can create the bibliography using
+%          \printbibliography[heading=bibintoc,title={References}]
+%          (The bibintoc adds the references to the table of contents)
+\usepackage{biblatex}
