@@ -142,6 +142,7 @@ class TetrisApp(object):
 	
 	def reset(self):
 		self.board = self.new_board()
+		self.gameover = False
 		self.new_stone()
 		self.score = 0
 	
@@ -310,10 +311,11 @@ class TetrisApp(object):
 		for _ in range(rot):
 			self.stone = self._rotate_piece(self.stone)
 		if self.render:
-			self.screen.fill((0,0,0))
 			while not self.check_collision(self.board, self.stone, pos):
+				pygame.event.get()
+				self.screen.fill((0,0,0))
 				self._render_matrix(self.board, (0,0))
-				self._render_matrix(self.stone,(self.stone_x, self.stone_y))
+				self._render_matrix(self.stone,(pos[0], pos[1]))
 				self._score_msg() 
 				pos[1] += 1
 				pygame.display.update()
@@ -324,11 +326,12 @@ class TetrisApp(object):
 				pos[1] +=1
 			self.board = self.join_matrixes(self.board, self.stone, pos)
 		lines, self.board = self._clear_lines(self.board)
-		self.score += 1 + lines**2 * self.cols
+		addscore = 1 + lines**2 * self.cols
 		self.new_stone()
 		if self.gameover:
-			self.score -= 2
-		return self.score, self.gameover
+			addscore -= 2
+		self.score += addscore
+		return addscore, self.gameover
 
 	def pcrun(self):
 		self.gameover = False

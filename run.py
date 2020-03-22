@@ -2,8 +2,9 @@ import neuralnetwork as nn
 import tetris
 import numpy as np
 import random
+import losses
 
-batch_size = 1
+batch_size = 4
 gamma = 0.95
 eps_start = 1
 eps_end = 0.01
@@ -11,7 +12,7 @@ eps_decay = 0.001
 target_update = 10
 memory_size = 20000
 lr = 0.001
-num_episodes = 5
+num_episodes = 2
 
 # em = tetris.TetrisApp(8, 16, 750, True, 40, 30)
 # strategy = nn.EpsilonGreedyStrategt(eps_start, eps_end, eps_decay)
@@ -57,21 +58,26 @@ num_episodes = 5
 #         target_net.load_state_dict(policy_net.state_dict())
 
 # em.close()
+
+def sigmoid(x):
+  return 1 / (1 + np.exp(-x))
+
 em = tetris.TetrisApp(8, 16, 750, True, 40, 30)
-policy_net = nn.DQNsimple(em.get_state_size(), 1, nn.MSE_loss)
+em.pcrun()
+policy_net = nn.DQNsimple(em.get_state_size(), 1, losses.MSE_loss)
 memory = nn.ReplayMemory(memory_size)
 strategy = nn.EpsilonGreedyStrategy(eps_start, eps_end, eps_decay)
 
 current_step = -1
 for episode in range(num_episodes):
     current_step += 1
-    em.pcrun()
     em.reset()
     done = False
     state = em._get_board_props(em.board)
     while not done:
         next_state = em.get_next_states()
         rate = strategy.get_exploration_rate(current_step)
+
         if rate > random.random():
             best_move = random.sample(list(next_state),1)[0]
         else:
@@ -81,27 +87,29 @@ for episode in range(num_episodes):
                 predicted_qs[(data[0], data[1])] = policy_net.f_pass(np.array([next_state[data[0], data[1]]]).T)[0,0]
 
             best_move = max(predicted_qs, key=predicted_qs.get)
+
         reward, done = em.pcplace(best_move[0], best_move[1])
 
-        memory.push(nn.Experience(state, best_move, next_state[best_move], reward))
+        memory.push(nn.Experience(state, done, next_state[best_move], reward))
         state = next_state[best_move]
 
         if memory.can_provide_sample(batch_size):
             experiences = memory.sample(batch_size)
-            states, actions, rewards, next_states = [], [], [], []
+            states, dones, rewards, next_states = [], [], [], []
             for exp in experiences:
                 states.append(exp.state)
-                actions.append(exp.action)
+                dones.append(exp.done)
                 rewards.append(exp.reward)
                 next_states.append(exp.next_state)
 
-            current_q_values, next_q_values = np.zeros(batch_size), np.zeros(batch_size)
+            target_q_values = np.zeros(batch_size)
             for i in range(batch_size):
-                current_q_values[i] = policy_net.f_pass(np.array([states[i]]).T)[0,0]
-                next_q_values[i] = policy_net.f_pass(np.array([next_states[i]]).T)[0,0]
+                next_q_value = policy_net.f_pass(np.array([next_states[i]]).T)[0,0]
+                if dones[i]:
+                    target_q_values[i] = rewards[i]
+                else:
+                    target_q_values[i] = rewards[i] + gamma * next_q_value
 
-            target_q_values = (next_q_values * gamma) + rewards
- 
             loss = nn.SGD(batch_size, np.array(states).T, np.array([target_q_values]), policy_net, lr=lr)
 
 
