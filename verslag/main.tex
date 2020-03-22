@@ -1,6 +1,7 @@
 \documentclass{report}
 
 \input{preamble.tex}
+\addbibresource{tetris.bib}
 
 \title{Learning to play Tetris using deep Q learning}
 \author{Coen Verscuur \and Emiel Slootman}
@@ -10,9 +11,21 @@
 
 \maketitle
 
+
 \section{Introduction}
-In this report we will 
+Tetris. Who doesn't know it. Tetris was developed in the 80's by the Sovjet engineer Alexey Pajitnov at the Moscow Academy of Science \cite{tet}. The point of the game is to drop blocks, tetrominos, and make full rows which gets you point. To be successful at the game insight and a certain speed are required of the player. You have to be tactical about how you drop the blocks and how you orientate them. If you just roughly keep dropping the blocks in the places were there are big holes, you are gonna find you are quickly developing holes. Besides, it is worth it to wait out on clearing a line if this allows you to clear multiple lines are once in a later turn, since this yields a higher score. This last fact makes Tetris a very suitable game for a reinforcement learning approach.
+In this report we will first go over some basic theory about reinforcement learning. After this we will talk in more detail about how to approach Tetris using reinforcement learning and then we will discuss how we implemented a reinforcement learning algorithm to play Tetris.
+
+\tableofcontents
 
 \chapter{Theory}
-\section{Hoi}
+\section{Reinforcement Learning}
+In reinforcement learning, the learner has to learn which actions to take in order to maximise a reward \cite[1]{Sutton2018}. The learner does not know what he is looking at or what his actions do. Reinforcement learning is focused on studying the behaviour of such agents, the object that is learning, and how they behave and how they can be optimised. A famous example of a reinforcement learning algorithm is AlphaGo \cite{alphago}. AlphaGo was the first computer program that was able to beat the world champion in Go. Go in an ancient Chinese board game which is famous for it's complexity. AlphaGo makes use of neural networks, like most reinforcement learning algorithms, to predict which moves are the best.\\
+Reinforcement learning is different from supervised learning. In supervised learning, the training data is already labelled with the correct output \cite[2]{Sutton2018}. The goal of the algorithm is to give the correct response for new data which are not in the training data. In reinforcement learning there is no pre-labelled data. The agent must explore on its own and learn from its own experience. An import part is this is the Markov decision process.
+
+\subsection{Markov decision process}
+
+
+\printbibliography[heading=bibintoc,title={References}]
+
 \end{document}
