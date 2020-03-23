@@ -136,6 +136,7 @@ for episode in range(num_episodes):
 
 plt.xlabel("Episodes")
 plt.ylabel('Average score over 10 episodes')
+plt.grid()
 plt.plot(np.linspace(29, num_episodes, num_episodes - 29) , moving_average(score))
 plt.show()
 
