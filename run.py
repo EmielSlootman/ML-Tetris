@@ -5,16 +5,17 @@ import random
 import losses
 import matplotlib.pyplot as plt
 import matplotlib
+import copy
 
 batch_size = 512
 gamma = 0.95
 eps_start = 1
 eps_end = 0.0
-eps_decay = 0.005
-target_update = 10
+eps_decay = 0.002
+target_update = 50
 memory_size = 20000
 lr = 0.001 * 0.0001
-num_episodes = 2500
+num_episodes = 3000
 
 # em = tetris.TetrisApp(8, 16, 750, True, 40, 30)
 # strategy = nn.EpsilonGreedyStrategt(eps_start, eps_end, eps_decay)
@@ -69,6 +70,7 @@ def moving_average(a, n=30) :
 em = tetris.TetrisApp(8, 16, 750, False, 40, 30*100)
 em.pcrun()
 policy_net = nn.DQN(em.get_state_size(), 1, losses.MSE_loss)
+target_net = nn.DQN(em.get_state_size(), 1, losses.MSE_loss)
 memory = nn.ReplayMemory(memory_size)
 strategy = nn.EpsilonGreedyStrategy(eps_start, eps_end, eps_decay)
 
@@ -115,7 +117,7 @@ for episode in range(num_episodes):
 
             target_q_values = np.zeros(batch_size)
             for i in range(batch_size):
-                next_q_value = policy_net.f_pass(np.array([next_states[i]]).T)[0,0]
+                next_q_value = target_net.f_pass(np.array([next_states[i]]).T)[0,0]
                 if dones[i]:
                     target_q_values[i] = rewards[i]
                 else:
@@ -126,6 +128,9 @@ for episode in range(num_episodes):
                 break
     score[episode] = em.score
     print(episode)
+
+    if episode % target_update == 0:
+        target_net = copy.deepcopy(policy_net)
     # plt.clf()
     # plt.plot(np.linspace(9, num_episodes, num_episodes - 9) , moving_average(score))
     # plt.xlabel("Episodes")
@@ -135,7 +140,7 @@ for episode in range(num_episodes):
 
 
 plt.xlabel("Episodes")
-plt.ylabel('Average score over 10 episodes')
+plt.ylabel('Average score over 30 episodes')
 plt.grid()
 plt.plot(np.linspace(29, num_episodes, num_episodes - 29) , moving_average(score))
 plt.show()
