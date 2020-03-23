@@ -167,7 +167,7 @@ class TetrisApp(object):
 			for x, val in enumerate(row):
 				if val:
 					pygame.draw.rect(self.screen, self.COLOURS[val], pygame.Rect((off_x+x) * self.size, (off_y+y) * self.size, self.size, self.size),0)
-	
+
 	def move(self, delta_x):
 		if not self.gameover and not self.paused:
 			new_x = self.stone_x + delta_x
@@ -302,32 +302,33 @@ class TetrisApp(object):
 					pos[1] += 1
 
 				tempboard = self.join_matrixes(tempboard, piece, pos)
-				states[(x, rot)] = self._get_board_props(tempboard)
+				if (tempboard <= 7).all():
+					states[(x, rot)] = self._get_board_props(tempboard)
 			piece = self._rotate_piece(piece)
 		return states
 
 	def pcplace(self, x, rot):
-		pos = [x, 0]
+		self.stone_x = x
 		for _ in range(rot):
 			self.stone = self._rotate_piece(self.stone)
 		if self.render:
-			while not self.check_collision(self.board, self.stone, pos):
+			while not self.check_collision(self.board, self.stone, (self.stone_x, self.stone_y)):
 				pygame.event.get()
 				self.screen.fill((0,0,0))
 				self._render_matrix(self.board, (0,0))
-				self._render_matrix(self.stone,(pos[0], pos[1]))
+				self._render_matrix(self.stone,(self.stone_x, self.stone_y))
 				self._score_msg() 
-				pos[1] += 1
+				self.stone_y += 1
 				pygame.display.update()
-				self.dont_burn_my_cpu.tick(self.fps)	
-			self.board = self.join_matrixes(self.board, self.stone, pos)
+				self.dont_burn_my_cpu.tick(self.fps)
+			self.board = self.join_matrixes(self.board, self.stone, (self.stone_x, self.stone_y))
 		else:
-			while not self.check_collision(self.board, self.stone, pos):
-				pos[1] +=1
-			self.board = self.join_matrixes(self.board, self.stone, pos)
+			while not self.check_collision(self.board, self.stone, (self.stone_x, self.stone_y)):
+				self.stone_y += 1
+			self.board = self.join_matrixes(self.board, self.stone, (self.stone_x, self.stone_y))
+		self.new_stone()
 		lines, self.board = self._clear_lines(self.board)
 		addscore = 1 + lines**2 * self.cols
-		self.new_stone()
 		if self.gameover:
 			addscore -= 2
 		self.score += addscore

@@ -70,7 +70,7 @@ class DQN:
 		self.H = A3
 		return self.H
 	
-	def back_prop(self,X,Y, batch_size):
+	def back_prop(self, X, Y, batch_size):
 		m = batch_size
 		self.loss = self.lossfn.get_loss(self.H, Y)
 		dL_dZ = self.lossfn.diff(self.H, Y)
@@ -78,6 +78,7 @@ class DQN:
 		self.L3.out_grad(dL_dZ, self.L2.A, m)
 		self.L2.grad(self.L3.dZ, self.L3.W, self.L1.A, m)
 		self.L1.grad(self.L2.dZ, self.L2.W, X, m)
+		#print(self.L1.dW, '\n', self.L2.dW, '\n', self.loss, '\n', dL_dZ, '\n')
 		
 	def optim(self, lr):
 		self.L1.step(lr)
@@ -102,7 +103,7 @@ class DQNsimple:
 		dL_dZ = self.lossfn.diff(self.H, Y)
 		self.L2.out_grad(dL_dZ, self.L1.A, m)
 		self.L1.grad(self.L2.dZ, self.L2.W, X, m)
-		print(self.L1.dW, '\n', self.L2.dW, '\n', self.loss, '\n', dL_dZ, '\n')
+		#print(self.L1.dW, '\n', self.L2.dW, '\n', self.loss, '\n', dL_dZ, '\n')
 		
 	def optim(self, lr):
 		self.L1.step(lr)

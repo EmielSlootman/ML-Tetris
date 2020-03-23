@@ -1,7 +1,7 @@
 import numpy as np
 
 class MSE_loss:
-	def get_loss(self,H,Y):
+	def get_loss(self, H, Y):
 		m = len(Y)
 		L = 1/(2*m) * np.sum((H - Y)**2)
 		return L
@@ -12,7 +12,7 @@ class MSE_loss:
 		return dL_dZ
 
 class CE_loss:
-	def get_loss(self,H,Y):
+	def get_loss(self, H, Y):
 		L = np.sum(np.dot(-Y.T , np.log(H)))/Y.shape[1]
 		return L
 	

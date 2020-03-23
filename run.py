@@ -3,16 +3,18 @@ import tetris
 import numpy as np
 import random
 import losses
+import matplotlib.pyplot as plt
+import matplotlib
 
-batch_size = 4
+batch_size = 512
 gamma = 0.95
 eps_start = 1
-eps_end = 0.01
-eps_decay = 0.001
+eps_end = 0.0
+eps_decay = 0.005
 target_update = 10
 memory_size = 20000
-lr = 0.001
-num_episodes = 2
+lr = 0.001 * 0.0001
+num_episodes = 2500
 
 # em = tetris.TetrisApp(8, 16, 750, True, 40, 30)
 # strategy = nn.EpsilonGreedyStrategt(eps_start, eps_end, eps_decay)
@@ -59,15 +61,24 @@ num_episodes = 2
 
 # em.close()
 
-def sigmoid(x):
-  return 1 / (1 + np.exp(-x))
+def moving_average(a, n=30) :
+    ret = np.cumsum(a, dtype=float)
+    ret[n:] = ret[n:] - ret[:-n]
+    return ret[n - 1:] / n
 
-em = tetris.TetrisApp(8, 16, 750, True, 40, 30)
+em = tetris.TetrisApp(8, 16, 750, False, 40, 30*100)
 em.pcrun()
-policy_net = nn.DQNsimple(em.get_state_size(), 1, losses.MSE_loss)
+policy_net = nn.DQN(em.get_state_size(), 1, losses.MSE_loss)
 memory = nn.ReplayMemory(memory_size)
 strategy = nn.EpsilonGreedyStrategy(eps_start, eps_end, eps_decay)
 
+# fig = plt.figure()
+# thismanager = plt.get_current_fig_manager()
+# thismanager.window.wm_geometry("+500+0")
+# plt.ion()
+
+
+score = np.zeros(num_episodes ) * np.nan
 current_step = -1
 for episode in range(num_episodes):
     current_step += 1
@@ -111,7 +122,21 @@ for episode in range(num_episodes):
                     target_q_values[i] = rewards[i] + gamma * next_q_value
 
             loss = nn.SGD(batch_size, np.array(states).T, np.array([target_q_values]), policy_net, lr=lr)
+            if np.isnan(loss):
+                break
+    score[episode] = em.score
+    print(episode)
+    # plt.clf()
+    # plt.plot(np.linspace(9, num_episodes, num_episodes - 9) , moving_average(score))
+    # plt.xlabel("Episodes")
+    # plt.ylabel('Average score over 10 episodes')
+    # plt.draw()
+    # plt.pause(0.0001)
 
 
+plt.xlabel("Episodes")
+plt.ylabel('Average score over 10 episodes')
+plt.plot(np.linspace(29, num_episodes, num_episodes - 29) , moving_average(score))
+plt.show()
 
 em.quit()
