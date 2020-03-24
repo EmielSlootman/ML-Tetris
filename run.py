@@ -18,6 +18,8 @@ memory_size = 20000
 lr = 0.001 * 0.01
 num_episodes = 50
 
+filename = "ML_" + str(lr) + "target_update" + str(target_update)
+
 def moving_average(a, n=30) :
     ret = np.cumsum(a, dtype=float)
     ret[n:] = ret[n:] - ret[:-n]
@@ -36,7 +38,7 @@ strategy = nn.EpsilonGreedyStrategy(eps_start, eps_end, eps_decay)
 # plt.ion()
 
 score = np.zeros(num_episodes ) * np.nan
-losses = np.zeros(num_episodes)
+lossess = np.zeros(num_episodes)
 current_step = -1
 for episode in range(num_episodes):
     current_step += 1
@@ -82,7 +84,7 @@ for episode in range(num_episodes):
             loss = nn.SGD(batch_size, np.array(states).T, np.array([target_q_values]), policy_net, lr=lr)
             if np.isnan(loss):
                 break
-            losses[episode] = loss
+            lossess[episode] = loss
     score[episode] = em.score
     print(episode, strategy.get_exploration_rate(current_step))
 
@@ -95,7 +97,6 @@ for episode in range(num_episodes):
     # plt.draw()
     # plt.pause(0.0001)
 
-filename = "ML_" + str(lr) + "target_update" + str(target_update)
 
 x = np.linspace(1, num_episodes, num_episodes)
 
@@ -105,7 +106,7 @@ plt.grid()
 plt.plot(np.linspace(30, num_episodes, num_episodes - 29) , moving_average(score, 30))
 plt.savefig(filename + ".png")
 
-np.savetxt(filename + ".csv", np.asarray([x.astype(int), score.astype(int), losses]).T, delimiter=',')
+np.savetxt(filename + ".csv", np.asarray([x.astype(int), score.astype(int), lossess]).T, delimiter=',')
 
 
 em.quit()
