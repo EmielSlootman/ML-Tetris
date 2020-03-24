@@ -12,6 +12,10 @@ It is not very usefull for us.
 https://www.asimovinstitute.org/neural-network-zoo/
 
 
+Deeplearning met pixels
+http://karpathy.github.io/2016/05/31/rl/ 
+
+
 
 tetris ()
 https://www.youtube.com/watch?v=pXTfgw9A08w
