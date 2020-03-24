@@ -277,6 +277,11 @@ class TetrisApp(object):
 		"""Size of the state"""
 		return 4
 
+	def get_state_size_board(self):
+		"""Size of the state"""
+		return self.cols * self.rows
+
+
 	def get_next_states(self):
 		"""Get all possible next states"""
 		states = {}
@@ -306,6 +311,39 @@ class TetrisApp(object):
 					states[(x, rot)] = self._get_board_props(tempboard)
 			piece = self._rotate_piece(piece)
 		return states
+
+	def get_next_states_board(self):
+		"""Get all possible next states"""
+		states = {}
+		piece = self.stone.copy()
+		
+		if len(piece[0]) == 2: 
+			rotations = 1
+		elif len(piece[0]) == 4:
+			rotations = 2
+		else:
+			rotations = 4
+
+		# For all rotations
+		for rot in range(rotations):
+			x_len = len(piece[0])
+
+			# For all positions
+			for x in range(self.cols - x_len + 1):
+				pos = [x, 0]
+				tempboard = self.board.copy()
+				# Drop piece
+				while not self.check_collision(tempboard, piece, pos):
+					pos[1] += 1
+
+				tempboard = self.join_matrixes(tempboard, piece, pos)
+				if (tempboard <= 7).all():
+					states[(x, rot)] = np.minimum(tempboard[:self.rows, :].flatten(), 1)
+			piece = self._rotate_piece(piece)
+		return states
+
+	def _get_board(self):
+		return np.minimum(self.board[:self.rows, :].flatten(), 1)
 
 	def pcplace(self, x, rot):
 		self.stone_x = x

@@ -6,61 +6,17 @@ import losses
 import matplotlib.pyplot as plt
 import matplotlib
 import copy
+import sys
 
 batch_size = 512
 gamma = 0.95
 eps_start = 1
 eps_end = 0.0
 eps_decay = 0.002
-target_update = 50
+target_update = 10
 memory_size = 20000
-lr = 0.001 * 0.0001
-num_episodes = 3000
-
-# em = tetris.TetrisApp(8, 16, 750, True, 40, 30)
-# strategy = nn.EpsilonGreedyStrategt(eps_start, eps_end, eps_decay)
-# agent = nn.Agens(strategy, em.num_actions_available())
-# memory = nn.ReplayMemory(memory_size)
-
-# policy_net = nn.DQN(em.get_state_size(), 1, nn.CE_Loss)
-# target_net = nn.DQN(em.get_state_size(), 1, nn.CE_Loss)
-# target_net.load_state_dict(policy_net.state_dict())
-# target_net.eval()
-# optimizer = optim.Adam(params=policy_net.parameters(),policy_net, lr=lr)
-
-# episode_durations = []
-
-# for episode in range(num_episodes):
-#     em.reset()
-#     state = em.get_state()
-#     for timestep in count():
-#         action = agent.select_action(state, policy_net)
-#         reward = em.take_action(action)
-#         next_state = em.get_state()
-#         memory.push(nn.Experience(state, action, next_state, reward))
-#         state = next_state
-#         if memory.can_provide_sample(batch_size):
-#             experiences = memory.sample(batch_size)
-#             states, actions, rewards, next_states = extract_tensors(experiences)
-            
-#             current_q_values = QValues.get_current(policy_net, states, actions)
-#             next_q_values = QValues.get_next(target_net, next_states)
-#             target_q_values = (next_q_values * gamma) + rewards
-
-#             loss = F.mse_loss(current_q_values, target_q_values.unsqueeze(1))
-#             optimizer.zero_grad()
-#             loss.backward()
-#             optimizer.step()
-
-#         if em.done:
-#             episode_durations.append(timestep)
-#             plot(episode_durations, 100)
-#             break
-        
-#     if episode % target_update == 0:
-#         target_net.load_state_dict(policy_net.state_dict())
-
-# em.close()
+lr = 0.001 * 0.01
+num_episodes = 50
 
 def moving_average(a, n=30) :
     ret = np.cumsum(a, dtype=float)
@@ -69,8 +25,8 @@ def moving_average(a, n=30) :
 
 em = tetris.TetrisApp(8, 16, 750, False, 40, 30*100)
 em.pcrun()
-policy_net = nn.DQN(em.get_state_size(), 1, losses.MSE_loss)
-target_net = nn.DQN(em.get_state_size(), 1, losses.MSE_loss)
+policy_net = nn.DQN(em.get_state_size_board(), 1, losses.MSE_loss)
+target_net = copy.deepcopy(policy_net)
 memory = nn.ReplayMemory(memory_size)
 strategy = nn.EpsilonGreedyStrategy(eps_start, eps_end, eps_decay)
 
@@ -79,16 +35,16 @@ strategy = nn.EpsilonGreedyStrategy(eps_start, eps_end, eps_decay)
 # thismanager.window.wm_geometry("+500+0")
 # plt.ion()
 
-
 score = np.zeros(num_episodes ) * np.nan
+losses = np.zeros(num_episodes)
 current_step = -1
 for episode in range(num_episodes):
     current_step += 1
     em.reset()
     done = False
-    state = em._get_board_props(em.board)
+    state = em._get_board()
     while not done:
-        next_state = em.get_next_states()
+        next_state = em.get_next_states_board()
         rate = strategy.get_exploration_rate(current_step)
 
         if rate > random.random():
@@ -126,23 +82,30 @@ for episode in range(num_episodes):
             loss = nn.SGD(batch_size, np.array(states).T, np.array([target_q_values]), policy_net, lr=lr)
             if np.isnan(loss):
                 break
+            losses[episode] = loss
     score[episode] = em.score
-    print(episode)
+    print(episode, strategy.get_exploration_rate(current_step))
 
     if episode % target_update == 0:
         target_net = copy.deepcopy(policy_net)
     # plt.clf()
-    # plt.plot(np.linspace(9, num_episodes, num_episodes - 9) , moving_average(score))
+    # plt.plot(np.linspace(49, num_episodes, num_episodes - 49) , moving_average(score, 50))
     # plt.xlabel("Episodes")
-    # plt.ylabel('Average score over 10 episodes')
+    # plt.ylabel('Average score over 50 episodes')
     # plt.draw()
     # plt.pause(0.0001)
 
+filename = "ML_" + str(lr) + "target_update" + str(target_update)
+
+x = np.linspace(1, num_episodes, num_episodes)
 
 plt.xlabel("Episodes")
 plt.ylabel('Average score over 30 episodes')
 plt.grid()
-plt.plot(np.linspace(29, num_episodes, num_episodes - 29) , moving_average(score))
-plt.show()
+plt.plot(np.linspace(30, num_episodes, num_episodes - 29) , moving_average(score, 30))
+plt.savefig(filename + ".png")
+
+np.savetxt(filename + ".csv", np.asarray([x.astype(int), score.astype(int), losses]).T, delimiter=',')
+
 
 em.quit()
