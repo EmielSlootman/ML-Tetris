@@ -16,7 +16,7 @@ eps_decay = 0.002
 target_update = 10
 memory_size = 20000
 lr = 0.001 * 0.01
-num_episodes = 50
+num_episodes = 3000
 
 filename = "ML_" + str(lr) + "target_update" + str(target_update)
 
