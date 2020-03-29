@@ -59,8 +59,8 @@ def SGD(batch_size,X,Y,model,lr=0.001):
 class DQN:
 	def __init__(self, X_size, Y_size, lossfn):
 		self.L1 = layer(X_size, 16, act.relu)
-		self.L2 = layer(16, 16, act.relu)        
-		self.L3 = layer(16, Y_size, act.linear)
+		self.L2 = layer(16, 8, act.relu)        
+		self.L3 = layer(8, Y_size, act.linear)
 		self.lossfn = lossfn()
 		
 	def f_pass(self, X):

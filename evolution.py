@@ -41,7 +41,7 @@ def cross_and_mutate(pop, pop_size):
     return offspring
 
 def run(N = 6, num_generations = 10000):
-    em = tetris.TetrisApp(8, 16, 750, False, 40, 30*100)
+    em = tetris.TetrisApp(10, 10, 750, False, 40, 30*100)
     em.pcrun()
     net = NN.DQN(em.get_state_size(), 1, losses.MSE_loss)
 
