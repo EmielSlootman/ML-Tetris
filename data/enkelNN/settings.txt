@@ -1,3 +1,8 @@
+state input
+
+simple = 8 RELU
+else = 16 RELU 8 RELU
+
 batch_size = 512
 gamma = 0.95
 eps_start = 1
