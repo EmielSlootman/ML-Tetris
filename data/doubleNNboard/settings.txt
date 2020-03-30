@@ -1,0 +1,12 @@
+double NN
+board
+
+32 RELU
+32 RELU
+
+batch_size = 512
+gamma = 0.95
+eps_start = 1
+eps_end = 0.0
+eps_decay = 0.002
+memory_size = 20000

@@ -8,16 +8,16 @@ import matplotlib
 import copy
 import sys
 
-batch_size = 32
+batch_size = 512
 gamma = 0.95
 eps_start = 1
 eps_end = 0.0
 eps_decay = 0.002
 memory_size = 20000
 lr = 0.001 * 0.01
-num_episodes = 3000
+num_episodes = 6000
 
-filename = "ML_1NN_simple" + str(lr)
+filename = "ML_1NN_long_" + str(lr)
 
 def moving_average(a, n=30) :
     ret = np.cumsum(a, dtype=float)
@@ -26,7 +26,7 @@ def moving_average(a, n=30) :
 
 em = tetris.TetrisApp(8, 16, 750, False, 40, 30*100)
 em.pcrun()
-policy_net = nn.DQNsimple(em.get_state_size(), 1, losses.MSE_loss)
+policy_net = nn.DQNsimple(em.get_state_size_board(), 1, losses.MSE_loss)
 memory = nn.ReplayMemory(memory_size)
 strategy = nn.EpsilonGreedyStrategy(eps_start, eps_end, eps_decay)
 
@@ -42,9 +42,9 @@ for episode in range(num_episodes):
     current_step += 1
     em.reset()
     done = False
-    state = em._get_board_props(em.board)
+    state = em._get_board()
     while not done:
-        next_state = em.get_next_states()
+        next_state = em.get_next_states_board()
         rate = strategy.get_exploration_rate(current_step)
 
         if rate > random.random():
