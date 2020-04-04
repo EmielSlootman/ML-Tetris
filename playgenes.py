@@ -3,7 +3,7 @@ import neuralnetwork as NN
 import losses
 import numpy as np
 
-em = tetris.TetrisApp(10, 20, 750, True, 40, 30*100)
+em = tetris.TetrisApp(10, 20, 750, True, 40, 30*10)
 net = NN.DQN(em.get_state_size(), 1, losses.MSE_loss)
 em.pcrun()
 em.reset()
